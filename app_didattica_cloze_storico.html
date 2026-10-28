@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClozeLab - Esercitazione Didattica di Storia e Grammatica</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .cloze-input {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 700;
+        }
+        
+        .cloze-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+            border-color: #4f46e5 !important;
+        }
+
+        .correct-answer {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #15803d !important;
+        }
+
+        .wrong-answer {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #b91c1c !important;
+        }
+
+        /* Responsive Drag and Drop / Bank Styling */
+        .word-chip {
+            user-select: none;
+            touch-action: manipulation;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .word-chip:active {
+            transform: scale(0.95);
+        }
+
+        /* Print Ready Stylesheet */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .card-box {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+            input.cloze-input {
+                border-bottom: 2px solid #000 !important;
+                background: transparent !important;
+                width: 120px !important;
+            }
+            input.cloze-input::placeholder {
+                color: transparent !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="bg-indigo-700 text-white shadow-md no-print sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-indigo-800 rounded-xl shadow-inner">
+                    <i class="fa-solid fa-book-bookmark text-2xl text-amber-300"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-xl tracking-tight leading-none">ClozeLab <span class="text-xs bg-indigo-500 text-white font-bold px-2 py-0.5 rounded-full ml-1">v2.0</span></h1>
+                    <p class="text-xs text-indigo-200 mt-0.5">Esercitazione Didattica Interattiva: Storia & Coniugazione</p>
+                </div>
+            </div>
+
+            <!-- Switcher Studente / Docente -->
+            <div class="flex items-center bg-indigo-900/60 p-1 rounded-xl border border-indigo-500/30">
+                <button id="tabStudentBtn" onclick="switchView('student')" class="px-4 py-2 bg-white text-indigo-800 font-bold rounded-lg shadow text-xs md:text-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Modalità Studente</span>
+                </button>
+                <button id="tabTeacherBtn" onclick="switchView('teacher')" class="px-4 py-2 text-indigo-200 font-semibold rounded-lg text-xs md:text-sm hover:text-white hover:bg-indigo-800/50 transition flex items-center gap-2">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Pannello Docente</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+        <!-- ==================== VISTA STUDENTE ==================== -->
+        <div id="studentView" class="space-y-6">
+
+            <!-- Toolbar di Calibrazione e Accessibilità -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 no-print flex flex-wrap items-center justify-between gap-4">
+                
+                <!-- Calibrazione Difficoltà -->
+                <div class="flex items-center space-x-2">
+                    <label for="difficultySelect" class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders text-indigo-600"></i> Difficoltà:
+                    </label>
+                    <select id="difficultySelect" onchange="applyCalibration()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm font-semibold rounded-xl p-2 focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer">
+                        <option value="easy">Facile (Banca Parole + Aiuti)</option>
+                        <option value="medium" selected>Media (Prima Lettera + Trattini)</option>
+                        <option value="hard">Difficile (Nessun Aiuto)</option>
+                    </select>
+                </div>
+
+                <!-- Toggle Aiuto Immagini -->
+                <div class="flex items-center space-x-2">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleImages" onchange="applyCalibration()" class="sr-only peer" checked>
+                        <div class="w-10 h-5 bg-slate-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                        <span class="ml-2 text-xs font-bold text-slate-700 flex items-center gap-1">
+                            <i class="fa-regular fa-image text-indigo-600"></i> Immagini Aiuto
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Lettore Audio / Text to Speech -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="speakText()" class="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl flex items-center gap-2 border border-indigo-200 transition">
+                        <i class="fa-solid fa-volume-high text-indigo-600"></i>
+                        <span>Ascolta Testo</span>
+                    </button>
+                    <button onclick="stopSpeech()" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg" title="Interrompi">
+                        <i class="fa-solid fa-circle-stop"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Card Principale dell'Esercizio -->
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 card-box space-y-6">
+                
+                <!-- Intestazione Argomento -->
+                <div class="border-b border-slate-100 pb-4 flex flex-wrap justify-between items-start gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="topicBadge" class="bg-indigo-100 text-indigo-800 text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">Storia</span>
+                            <span class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                                <i class="fa-regular fa-clock"></i> Max 200 parole
+                            </span>
+                        </div>
+                        <h2 id="exerciseTitle" class="text-2xl md:text-3xl font-extrabold text-slate-800 mt-1">Titolo dell'Esercizio</h2>
+                        <p class="text-xs md:text-sm text-slate-500 mt-1">Inserisci la parola corretta negli spazi vuoti. Fai attenzione ai termini tecnici e alle coniugazioni verbali.</p>
+                    </div>
+
+                    <div class="flex flex-col items-end gap-1">
+                        <div class="flex items-center space-x-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-900">
+                            <i class="fa-solid fa-list-check text-indigo-600"></i>
+                            <span>10 Lacune Totali</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-medium">~3/4 Concetti Storici, ~1/4 Verbi</span>
+                    </div>
+                </div>
+
+                <!-- Banca Parole Interattiva (Visibile in Modalità Facile) -->
+                <div id="wordBankContainer" class="hidden bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="fa-solid fa-boxes-packing text-indigo-600"></i> Banca Parole (Fai clic su una parola per inserirla nel primo spazio libero):
+                        </span>
+                        <span id="distractorBadge" class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                            Include distrattori
+                        </span>
+                    </div>
+                    <div id="wordBank" class="flex flex-wrap gap-2">
+                        <!-- Popolato via JS -->
+                    </div>
+                </div>
+
+                <!-- Contenitore del Testo Cloze -->
+                <div id="clozeTextContainer" class="text-base md:text-lg leading-relaxed md:leading-loose text-slate-800 pt-2 space-y-4">
+                    <!-- Iniettato da JS -->
+                </div>
+
+                <!-- Azioni Esercizio -->
+                <div class="pt-6 border-t border-slate-100 flex flex-wrap justify-between items-center gap-4 no-print">
+                    <button onclick="resetExercise()" class="px-4 py-2 border border-slate-300 text-slate-600 hover:bg-slate-50 font-bold text-xs md:text-sm rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Ricomincia</span>
+                    </button>
+
+                    <button id="checkAnswersBtn" onclick="checkAnswers()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-indigo-200 transition flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Verifica Risposte</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Box Risultati e Statistiche -->
+            <div id="resultsCard" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="flex flex-wrap items-center justify-between border-b pb-4 gap-2">
+                    <div class="flex items-center gap-3">
+                        <div id="scoreIcon" class="p-3 rounded-xl bg-indigo-100 text-indigo-700 text-xl">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">Esito dell'Esercitazione</h3>
+                            <p class="text-xs text-slate-500">Analisi dettagliata delle risposte fornite</p>
+                        </div>
+                    </div>
+                    <div id="scoreBadge" class="text-2xl font-black px-4 py-2 rounded-xl bg-slate-100 text-slate-800">
+                        0 / 10
+                    </div>
+                </div>
+
+                <!-- Griglia Indicatori -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Accuratezza Globale</span>
+                        <div id="accuracyPercent" class="text-3xl font-black text-indigo-600 mt-1">0%</div>
+                    </div>
+                    <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 text-center">
+                        <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Termini Tecnici / Storici</span>
+                        <div id="techScore" class="text-3xl font-black text-emerald-600 mt-1">0 / 0</div>
+                    </div>
+                    <div class="p-4 bg-amber-50/50 rounded-xl border border-amber-100 text-center">
+                        <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Coniugazioni Verbali</span>
+                        <div id="verbScore" class="text-3xl font-black text-amber-600 mt-1">0 / 0</div>
+                    </div>
+                </div>
+
+                <!-- Feedback Pedagogico -->
+                <div id="feedbackText" class="p-4 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-900 text-sm leading-relaxed">
+                    <!-- Generato dinamicamente -->
+                </div>
+
+                <!-- Dettaglio Errore per Errore -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Dettaglio delle Risposte:</h4>
+                    <div id="correctionsList" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm">
+                        <!-- Popolato dinamicamente -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== PANNELLO DOCENTE ==================== -->
+        <div id="teacherView" class="hidden space-y-6">
+
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                
+                <div class="border-b pb-4 flex flex-wrap justify-between items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-800">Pannello Creatore & Docente</h2>
+                        <p class="text-xs md:text-sm text-slate-500">Crea o personalizza gli esercizi Cloze per i tuoi studenti o genera schede stampabili.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs md:text-sm rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-print"></i>
+                            <span>Stampa Scheda PDF</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preset Veloci -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Carica preset storico pronto:</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="loadPreset('rev_ind')" class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl border border-indigo-200 transition">
+                            <i class="fa-solid fa-industry mr-1"></i> La Seconda Rivoluzione Industriale
+                        </button>
+                        <button onclick="loadPreset('roma')" class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl border border-indigo-200 transition">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> Caduta Impero Romano d'Occidente
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Modifica -->
+                <div class="space-y-4 pt-2">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Titolo dell'Esercizio</label>
+                            <input type="text" id="editorTitle" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Categoria / Materia</label>
+                            <input type="text" id="editorCategory" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">
+                                Testo dell'Esercizio (Sintassi: <code class="bg-slate-100 px-1 rounded text-indigo-600">[Parola|Tipo|Suggerimento]</code>)
+                            </label>
+                            <span class="text-[11px] text-slate-500">Tipi: <strong>tech</strong> (storico/tecnico), <strong>verb</strong> (verbo)</span>
+                        </div>
+                        <textarea id="editorText" rows="7" class="w-full p-3 border border-slate-300 rounded-xl text-sm font-mono leading-relaxed focus:ring-2 focus:ring-indigo-500 outline-none" oninput="parseEditorText()"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Distrattori per Modalità Facile (separati da virgola)</label>
+                        <input type="text" id="editorDistractors" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="es. 1914, Ford, carbone, combatterono">
+                    </div>
+
+                    <!-- Anteprima Rilevamento Slot -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-extrabold text-slate-700 uppercase">Parole Rilevate nel Testo: <span id="detectedSlotCount" class="text-indigo-600">0</span> / 10</span>
+                            <span id="typeRatioBadge" class="text-[11px] font-bold text-slate-500"></span>
+                        </div>
+                        <div id="slotsPreviewGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                            <!-- Popolato da JS -->
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button onclick="saveEditorChanges()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm rounded-xl shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Salva e Applica Esercizio</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal Aiuto Immagine -->
+    <div id="imageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative">
+            <button onclick="closeImageModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h4 id="modalTitle" class="font-bold text-slate-800 text-center text-sm uppercase tracking-wide">Indizio Visivo</h4>
+            <div class="flex justify-center bg-slate-100 rounded-xl overflow-hidden p-2">
+                <img id="modalImage" src="" alt="Indizio" class="max-h-48 object-contain rounded-lg">
+            </div>
+            <p id="modalCaption" class="text-xs text-slate-600 text-center italic"></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 no-print mt-auto">
+        <p>ClozeLab - Strumento Didattico per la Calibrazione e Compensazione Apprendimento</p>
+    </footer>
+
+    <!-- Logic Javascript -->
+    <script>
+        // Preset 1: La Seconda Rivoluzione Industriale
+        const PRESET_REV_IND = {
+            title: "La Seconda Rivoluzione Industriale",
+            category: "Storia Contemporanea",
+            text: "Nella seconda metà del [1870|tech|Anno di inizio della trasformazione], l'Europa e gli Stati Uniti [vissero|verb|Verbo vivere (passato remoto, 3a pl.)] una straordinaria stagione di progresso. Tra le scoperte principali, l'uso dell'[elettricità|tech|Nuova forma di energia per l'illuminazione] e del [petrolio|tech|Combustibile liquido per i motori] rivoluzionarono la produzione. L'inventore Thomas [Edison|tech|Famoso inventore americano della lampadina] brevettò la prima lampadina ad alta durata, mentre nei trasporti si [diffuse|verb|Verbo diffondere (passato remoto, 3a sing.)] il motore a scoppio. La nuova rete [ferroviaria|tech|Infrastruttura dei treni] facilitò i commerci. Nacquero così le prime grandi [fabbriche|tech|Stabilimenti industriali] e si sviluppò il [proletariato|tech|Classe dei lavoratori salariati], segnando la nascita della società di [massa|tech|Tipologia di società basata sui consumi].",
+            distractors: ["1914", "costruirono", "carbone", "Ford", "agricoltura"]
+        };
+
+        // Preset 2: Caduta dell'Impero Romano d'Occidente
+        const PRESET_ROMA = {
+            title: "La Caduta dell'Impero Romano d'Occidente",
+            category: "Storia Antica",
+            text: "Nel [476|tech|Anno del crollo dell'Impero d'Occidente] d.C., l'Impero Romano d'Occidente giunse al termine quando il re barbaro [Odoacre|tech|Generale barbaro che depose l'imperatore] depose il giovane Romolo [Augustolo|tech|Soprannome dell'ultimo imperatore romano]. Le invasioni dei popoli [germanici|tech|Popolazioni dal nord Europa] e la grave crisi economica [accelerarono|verb|Verbo accelerare (passato remoto, 3a pl.)] il declino di Roma. Molte città si [spopolarono|verb|Verbo spopolarsi (passato remoto, 3a pl.)] e la popolazione cercò rifugio nelle campagne. L'autorità morale fu assunta dalla [Chiesa|tech|Istituzione religiosa cristiana], guidata dal [Papa|tech|Vescovo di Roma e capo della Chiesa]. Questo evento [segnò|verb|Verbo segnare (passato remoto, 3a sing.)] la fine dell'Età Antica e l'inizio del [Medioevo|tech|Epoca storica successiva all'Età Antica].",
+            distractors: ["1492", "Cesare", "combatterono", "Rinascimento", "Greco"]
+        };
+
+        // Immagini Fallback per suggerimenti visivi
+        const sampleImages = {
+            "1870": "https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=300&auto=format&fit=crop",
+            "vissero": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300&auto=format&fit=crop",
+            "elettricità": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=300&auto=format&fit=crop",
+            "petrolio": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&auto=format&fit=crop",
+            "Edison": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&auto=format&fit=crop",
+            "diffuse": "https://images.unsplash.com/photo-1508873696983-2df515122519?w=300&auto=format&fit=crop",
+            "ferroviaria": "https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=300&auto=format&fit=crop",
+            "fabbriche": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300&auto=format&fit=crop",
+            "proletariato": "https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=300&auto=format&fit=crop",
+            "massa": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=300&auto=format&fit=crop"
+        };
+
+        // Stato Globale dell'App
+        let currentExercise = { ...PRESET_REV_IND };
+        let parsedSlots = [];
+        let userAnswers = {};
+
+        window.onload = function() {
+            parseCurrentExercise();
+            renderExercise();
+            populateEditor();
+        };
+
+        // Cambia Vista Tra Studente e Docente
+        function switchView(view) {
+            const studentView = document.getElementById('studentView');
+            const teacherView = document.getElementById('teacherView');
+            const tabStudentBtn = document.getElementById('tabStudentBtn');
+            const tabTeacherBtn = document.getElementById('tabTeacherBtn');
+
+            if (view === 'student') {
+                studentView.classList.remove('hidden');
+                teacherView.classList.add('hidden');
+                tabStudentBtn.className = "px-4 py-2 bg-white text-indigo-800 font-bold rounded-lg shadow text-xs md:text-sm transition flex items-center gap-2";
+                tabTeacherBtn.className = "px-4 py-2 text-indigo-200 font-semibold rounded-lg text-xs md:text-sm hover:text-white hover:bg-indigo-800/50 transition flex items-center gap-2";
+            } else {
+                studentView.classList.add('hidden');
+                teacherView.classList.remove('hidden');
+                tabTeacherBtn.className = "px-4 py-2 bg-white text-indigo-800 font-bold rounded-lg shadow text-xs md:text-sm transition flex items-center gap-2";
+                tabStudentBtn.className = "px-4 py-2 text-indigo-200 font-semibold rounded-lg text-xs md:text-sm hover:text-white hover:bg-indigo-800/50 transition flex items-center gap-2";
+            }
+        }
+
+        // Parsing del testo con sintassi [parola|tipo|suggerimento]
+        function parseCurrentExercise() {
+            parsedSlots = [];
+            const regex = /\[(.*?)(?:\|(tech|verb))?(?:\|(.*?))?\]/g;
+            let match;
+
+            while ((match = regex.exec(currentExercise.text)) !== null) {
+                parsedSlots.push({
+                    word: match[1],
+                    type: match[2] || 'tech',
+                    hint: match[3] || `Indizio per ${match[1]}`,
+                    img: sampleImages[match[1]] || "https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=300&auto=format&fit=crop"
+                });
+            }
+        }
+
+        // Renderizza il Testo Cloze
+        function renderExercise() {
+            const container = document.getElementById('clozeTextContainer');
+            const difficulty = document.getElementById('difficultySelect').value;
+            const showImages = document.getElementById('toggleImages').checked;
+
+            document.getElementById('exerciseTitle').innerText = currentExercise.title;
+            document.getElementById('topicBadge').innerText = currentExercise.category || "Storia";
+
+            let slotIdx = 0;
+            const formattedText = currentExercise.text.replace(/\[(.*?)(?:\|(tech|verb))?(?:\|(.*?))?\]/g, (match, word, type, hint) => {
+                const idx = slotIdx;
+                const slotData = parsedSlots[idx] || { word, type: 'tech', hint: '' };
+                slotIdx++;
+
+                let placeholder = "";
+                const len = word.length;
+
+                if (difficulty === 'easy') {
+                    placeholder = `${word[0]}... (${len})`;
+                } else if (difficulty === 'medium') {
+                    placeholder = `${word[0]} ${'_ '.repeat(len - 1).trim()}`;
+                } else {
+                    placeholder = `(${len} lett.)`;
+                }
+
+                const badgeStyle = slotData.type === 'verb' ? 'border-amber-400' : 'border-indigo-300';
+
+                let imgBtn = '';
+                if (showImages) {
+                    imgBtn = `
+                        <button type="button" onclick="openImageModal('${slotData.img}', '${slotData.hint}')" class="text-indigo-600 hover:text-indigo-800 p-1 no-print" title="Indizio Visivo">
+                            <i class="fa-regular fa-lightbulb text-sm"></i>
+                        </button>
+                    `;
+                }
+
+                return `
+                    <span class="inline-flex items-center gap-1 mx-1 my-0.5">
+                        <input type="text" 
+                            id="slot_input_${idx}" 
+                            data-index="${idx}"
+                            placeholder="${placeholder}"
+                            maxlength="${len + 3}"
+                            oninput="userAnswers[${idx}] = this.value.trim()"
+                            class="cloze-input px-2 py-1 text-center bg-slate-50 border-b-2 ${badgeStyle} rounded-md text-slate-800 font-bold text-sm md:text-base focus:bg-white w-28 md:w-36"
+                        >
+                        ${imgBtn}
+                    </span>
+                `;
+            });
+
+            container.innerHTML = formattedText;
+            renderWordBank(difficulty);
+        }
+
+        // Renderizza la Banca Parole per Difficoltà Facile
+        function renderWordBank(difficulty) {
+            const container = document.getElementById('wordBankContainer');
+            const bank = document.getElementById('wordBank');
+
+            if (difficulty !== 'easy') {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+
+            let allWords = parsedSlots.map(s => s.word);
+            if (currentExercise.distractors && currentExercise.distractors.length > 0) {
+                allWords = allWords.concat(currentExercise.distractors);
+            }
+
+            // Mescola l'array
+            allWords.sort(() => Math.random() - 0.5);
+
+            bank.innerHTML = allWords.map(w => `
+                <button type="button" onclick="fillNextEmpty('${w}')" class="word-chip px-3 py-1.5 bg-white border border-slate-200 text-indigo-900 font-bold text-xs md:text-sm rounded-xl shadow-sm hover:bg-indigo-50 hover:border-indigo-300 transition">
+                    ${w}
+                </button>
+            `).join('');
+        }
+
+        // Inserisce una parola dalla banca al primo campo vuoto
+        function fillNextEmpty(word) {
+            for (let i = 0; i < parsedSlots.length; i++) {
+                const input = document.getElementById(`slot_input_${i}`);
+                if (input && !input.value.trim()) {
+                    input.value = word;
+                    userAnswers[i] = word;
+                    input.focus();
+                    break;
+                }
+            }
+        }
+
+        // Applicazione della Calibrazione
+        function applyCalibration() {
+            renderExercise();
+            hideResults();
+        }
+
+        // Verifica delle Risposte
+        function checkAnswers() {
+            let correctTotal = 0;
+            let techCorrect = 0, verbCorrect = 0;
+            let techTotal = 0, verbTotal = 0;
+
+            let correctionsHtml = '';
+
+            parsedSlots.forEach((slot, i) => {
+                const inputEl = document.getElementById(`slot_input_${i}`);
+                const givenVal = (userAnswers[i] || '').trim().toLowerCase();
+                const expectedVal = slot.word.trim().toLowerCase();
+
+                if (slot.type === 'verb') verbTotal++;
+                else techTotal++;
+
+                const isCorrect = givenVal === expectedVal;
+
+                if (isCorrect) {
+                    correctTotal++;
+                    if (slot.type === 'verb') verbCorrect++;
+                    else techCorrect++;
+                    inputEl.className = "cloze-input px-2 py-1 text-center rounded-md font-bold text-sm md:text-base w-28 md:w-36 correct-answer border-2";
+                } else {
+                    inputEl.className = "cloze-input px-2 py-1 text-center rounded-md font-bold text-sm md:text-base w-28 md:w-36 wrong-answer border-2";
+                }
+
+                correctionsHtml += `
+                    <div class="p-3 rounded-xl border ${isCorrect ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'} flex items-start justify-between">
+                        <div>
+                            <span class="text-[10px] font-extrabold uppercase tracking-wider ${slot.type === 'verb' ? 'text-amber-700' : 'text-indigo-700'}">
+                                ${slot.type === 'verb' ? 'Coniugazione Verbo' : 'Termine
