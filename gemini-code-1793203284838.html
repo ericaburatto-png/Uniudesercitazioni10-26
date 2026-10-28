@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esercitazione 1 - Cloze</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 750px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+        }
+
+        h1 {
+            color: #1e3a8a;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-toggle {
+            background: #e2e8f0;
+            color: #334155;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
+        .btn-toggle:hover {
+            background: #cbd5e1;
+        }
+
+        /* Styling dell'Accordion */
+        .accordion-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .accordion-item:hover {
+            border-color: #cbd5e1;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: #ffffff;
+            border: none;
+            outline: none;
+            text-align: left;
+            padding: 16px 20px;
+            font-size: 1.05rem;
+            font-weight: 700; /* TITOLO IN GRASSETTO */
+            color: #1e293b;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .accordion-header:hover {
+            background-color: #f8fafc;
+            color: #2563eb;
+        }
+
+        .accordion-header.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
+        .accordion-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            color: #64748b;
+        }
+
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+            color: #2563eb;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            background-color: #ffffff;
+            padding: 0 20px;
+        }
+
+        .accordion-content.open {
+            padding: 15px 20px 20px 20px;
+        }
+
+        /* Contenuti interni */
+        .accordion-content p {
+            color: #475569;
+            margin-bottom: 10px;
+            font-size: 0.98rem;
+        }
+
+        .accordion-content ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .accordion-content li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+
+        .accordion-content li::before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+            top: 0;
+            color: #2563eb;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .highlight-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid #2563eb;
+            padding: 10px 14px;
+            margin-top: 10px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.93rem;
+            color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ESERCITAZIONE 1 - CLOZE</h1>
+    <div class="subtitle">Guida metodologica e struttura dell'esercizio</div>
+
+    <div class="controls">
+        <button class="btn-toggle" onclick="expandAll()">Espandi Tutto</button>
+        <button class="btn-toggle" onclick="collapseAll()">Comprimi Tutto</button>
+    </div>
+
+    <!-- SEZIONE 1 -->
+    <div class="accordion-item">
+        <button class="accordion-header">
+            DESCRIZIONE ESERCIZIO
+            <span class="accordion-icon">&#9660;</span>
+        </button>
+        <div class="accordion-content">
+            <p>L'esercizio consiste nel leggere un testo in italiano e inserire le parole corrette inerenti negli spazi vuoti. L'argomento è storico ed ha una lunghezza massima di 200 parole circa. Le parole da cercare saranno 10.</p>
+            <div class="highlight-box">
+                <strong>Variabile personalizzata:</strong> ¾ di queste parole saranno tecniche (date, nomi, ...) per comprendere la didattica dell'argomento, mentre le altre saranno terminologie verbali da coniugare (richiamando un'altra materia).
+            </div>
+        </div>
+    </div>
+
+    <!-- SEZIONE 2 -->
+    <div class="accordion-item">
+        <button class="accordion-header">
+            PRE-REQUISITI
+            <span class="accordion-icon">&#9660;</span>
+        </button>
+        <div class="accordion-content">
+            <ul>
+                <li>Saper leggere</li>
+                <li>Saper comprendere un testo medio-breve</li>
+                <li>Aver compreso e studiato l'argomento trattato</li>
+                <li>Capacità di ricerca delle informazioni nelle proprie conoscenze mnemoniche</li>
+                <li>Coniugare i verbi</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SEZIONE 3 -->
+    <div class="accordion-item">
+        <button class="accordion-header">
+            OBIETTIVI PRINCIPALI
+            <span class="accordion-icon">&#9660;</span>
+        </button>
+        <div class="accordion-content">
+            <ul>
+                <li>Comprensione del testo</li>
+                <li>Per il docente: comprendere se l'argomento è stato appreso</li>
+                <li>Consolidare le forme verbali e lessicali</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SEZIONE 4 -->
+    <div class="accordion-item">
+        <button class="accordion-header">
+            OBIETTIVI SECONDARI
+            <span class="accordion-icon">&#9660;</span>
+        </button>
+        <div class="accordion-content">
+            <ul>
+                <li>Stimolare il ragionamento logico nell'inserimento della parola in caso di mancata conoscenza</li>
+                <li>Aumentare i tempi attentivi</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SEZIONE 5 -->
+    <div class="accordion-item">
+        <button class="accordion-header">
+            MODALITÀ PER CALIBRARE L'ESERCIZIO
+            <span class="accordion-icon">&#9660;</span>
+        </button>
+        <div class="accordion-content">
+            <ul>
+                <li>Lettura da parte del docente</li>
+                <li>Utilizzo delle immagini</li>
+                <li>Dare già le parole da poter scegliere (mettere solo quelle o aggiungere parole distrattori dello stesso argomento o no)</li>
+                <li>Non mettere le parole da scegliere ma mettere solo la prima lettera della parola da inserire</li>
+                <li>Non mettere le parole da scegliere e mettere i trattini per il numero di lettere</li>
+                <li>Non mettere le parole</li>
+                <li>Rendere il testo più semplice nel lessico</li>
+                <li>Ridurre/aumentare la lunghezza del testo</li>
+                <li>Ridurre/aumentare la numerosità delle parole da inserire</li>
+                <li>Proporre un pezzo di testo in altra lingua (MOLTO DIFFICILE)</li>
+                <li>Proporre le parole da inserire in lingua diversa che lo studente deve inserire tradotta in italiano</li>
+                <li>Creare testo in rima</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SEZIONE 6 -->
+    <div class="accordion-item">
+        <button class="accordion-header">
+            DIVERSE TIPOLOGIE DEL MEDESIMO ESERCIZIO
+            <span class="accordion-icon">&#9660;</span>
+        </button>
+        <div class="accordion-content">
+            <ul>
+                <li>Ascolto del testo e scrittura sul cartaceo</li>
+                <li>Creare l'esercizio in digitale</li>
+                <li>Far vedere prima un video sull'argomento</li>
+                <li>Al posto delle parole da inserire, mettere delle immagini che conducano alla risposta come aiuto visivo</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const headers = document.querySelectorAll('.accordion-header');
+
+    headers.forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            
+            // Toggle attivo/disattivo
+            header.classList.toggle('active');
+            
+            if (header.classList.contains('active')) {
+                content.classList.add('open');
+                content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+                content.classList.remove('open');
+                content.style.maxHeight = null;
+            }
+        });
+    });
+
+    function expandAll() {
+        headers.forEach(header => {
+            if (!header.classList.contains('active')) {
+                header.classList.add('active');
+                const content = header.nextElementSibling;
+                content.classList.add('open');
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+
+    function collapseAll() {
+        headers.forEach(header => {
+            if (header.classList.contains('active')) {
+                header.classList.remove('active');
+                const content = header.nextElementSibling;
+                content.classList.remove('open');
+                content.style.maxHeight = null;
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
