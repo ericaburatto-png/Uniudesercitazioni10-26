@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sfida Scientifica: Il Sistema Circolatorio</title>
+<style>
+:root {
+  --primary: #e63946;
+  --primary-dark: #b81d2a;
+  --bg-gradient: linear-gradient(135deg, #1d3557, #457b9d);
+  --card-bg: #ffffff;
+  --text-color: #1d3557;
+  --light-blue: #f1faee;
+  --success: #2a9d8f;
+  --error: #e63946;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+h1 { text-align: center; color: var(--primary); margin-top: 0; font-size: 28px; }
+h2 { text-align: center; color: #457b9d; margin-top: 5px; font-size: 18px; }
+.hero { text-align: center; font-size: 50px; margin: 10px 0; }
+
+label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; }
+
+input[type="text"] {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 15px;
+  border: 2px solid #a8dadc;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input[type="text"]:focus { border-color: var(--primary); }
+
+button {
+  padding: 14px 24px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  transition: background 0.2s, transform 0.1s;
+}
+button:hover { background: var(--primary-dark); }
+button:active { transform: scale(0.98); }
+
+.hidden { display: none !important; }
+
+/* Dashboard Giochi */
+.timer-box {
+  background: var(--light-blue);
+  border: 2px solid #a8dadc;
+  padding: 12px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  border-radius: 12px;
+  color: var(--primary-dark);
+  letter-spacing: 2px;
+}
+.timer-box.warning { background: #ffe6e6; color: var(--error); animation: pulse 1s infinite; }
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.progress-bar-wrap {
+  height: 10px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 15px 0 25px;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--success);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* Quiz & Typing UI */
+.question-box {
+  background: var(--light-blue);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.question-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option-btn {
+  background: white;
+  border: 2px solid #a8dadc;
+  color: var(--text-color);
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 15px;
+}
+.option-btn:hover { background: #e2f0d9; border-color: var(--success); }
+
+.typing-target {
+  background: #f8f9fa;
+  padding: 15px;
+  border-left: 5px solid var(--primary);
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.feedback { min-height: 24px; font-weight: bold; margin: 10px 0; text-align: center; }
+
+/* Report Finale */
+.report-card {
+  background: var(--light-blue);
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.report-card h2 { color: var(--primary); font-size: 24px; margin: 5px 0; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+.stat-item {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.stat-item strong { display: block; font-size: 22px; color: var(--primary); }
+
+table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; }
+th { background: #e2e8f0; }
+.correct-text { color: var(--success); font-weight: bold; }
+.wrong-text { color: var(--error); font-weight: bold; }
+
+.action-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.action-buttons button { flex: 1; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .container { box-shadow: none; max-width: 100%; padding: 0; }
+  .no-print { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- SCHERMATA INIZIALE -->
+  <section id="intro-screen">
+    <div class="hero">🫀 🩸 💻</div>
+    <h1>SFIDA DI SCIENZE: IL SISTEMA CIRCOLATORIO</h1>
+    <h2>Test Digitale con Timer per la Seconda Media</h2>
+
+    <p style="margin-top: 25px;">Benvenuto! Rispondi alle domande di scienze e digita correttamente le definizioni scientifiche prima che il tempo scada.</p>
+
+    <h3>👤 Inserisci i tuoi dati</h3>
+    <label for="nome">Nome *</label>
+    <input type="text" id="nome" placeholder="Es. Marco">
+
+    <label for="cognome">Cognome *</label>
+    <input type="text" id="cognome" placeholder="Es. Rossi">
+
+    <div style="background: var(--light-blue); padding: 15px; border-radius: 10px; margin: 15px 0;">
+      <strong>🎮 Regole del gioco:</strong>
+      <ul style="margin: 5px 0 0 20px; padding: 0;">
+        <li>Hai <strong>4 minuti</strong> complessivi per completare la prova.</li>
+        <li>Completa la prima parte a scelta multipla e la seconda parte di digitazione.</li>
+        <li>Premi <strong>INVIO</strong> dopo aver digitato le definizioni.</li>
+      </ul>
+    </div>
+
+    <button onclick="startGame()">INIZIA LA SFIDA 🚀</button>
+  </section>
+
+  <!-- SCHERMATA GIOCO -->
+  <section id="game-screen" class="hidden">
+    <div class="timer-box" id="timer">04:00</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+
+    <!-- SEZIONE QUIZ -->
+    <div id="quiz-section">
+      <div class="question-box">
+        <div class="question-title" id="quiz-question"></div>
+        <div class="options" id="quiz-options"></div>
+      </div>
+    </div>
+
+    <!-- SEZIONE TYPING -->
+    <div id="typing-section" class="hidden">
+      <div class="question-box">
+        <div class="question-title">⌨️ Digita la seguente frase scientifica rispettando maiuscole e punteggiatura:</div>
+        <div class="typing-target" id="typing-target"></div>
+        <input type="text" id="typing-input" placeholder="Scrivi qui e premi INVIO..." autocomplete="off" spellcheck="false">
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHERMATA REPORT -->
+  <section id="report-screen" class="hidden">
+    <h1>🏆 REPORT FINALE DELLA PROVA</h1>
+    
+    <div class="report-card">
+      <h2 id="report-student"></h2>
+      <h1 id="report-vote" style="font-size: 36px; color: var(--primary); margin: 10px 0;">Voto: 10/10</h1>
+      <p id="report-judgement" style="font-weight: bold; margin: 0;"></p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-item"><strong id="stat-correct">0/10</strong>Punteggio</div>
+      <div class="stat-item"><strong id="stat-accuracy">0%</strong>Precisione</div>
+      <div class="stat-item"><strong id="stat-time">0s</strong>Tempo Usato</div>
+    </div>
+
+    <p id="report-date" style="color: #64748b; font-size: 14px; text-align: center;"></p>
+
+    <h3>📋 Dettaglio dei Risultati</h3>
+    <div style="max-height: 250px; overflow-y: auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>N.</th>
+            <th>Quesito / Testo Richiesto</th>
+            <th>Tua Risposta</th>
+            <th>Esito</th>
+          </tr>
+        </thead>
+        <tbody id="details-table"></tbody>
+      </table>
+    </div>
+
+    <div class="action-buttons no-print">
+      <button onclick="window.print()" style="background: #457b9d;">🖨️ STAMPA / SALVA PDF</button>
+      <button onclick="downloadCSV()" style="background: #2a9d8f;">⬇️ SCARICA CSV</button>
+      <button onclick="location.reload()" style="background: #e63946;">🔄 NUOVA PROVA</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// CONTENUTI SCIENTIFICI PER 2ª MEDIA (Sistema Circolatorio)
+const quizData = [
+  { q: "Quali vasi sanguigni portano il sangue dal cuore alla periferia del corpo?", options: ["Vene", "Arterie", "Capillari"], a: 1 },
+  { q: "Quale componente del sangue è responsabile del trasporto dell'ossigeno?", options: ["Piastrine", "Globuli Bianchi", "Globuli Rossi"], a: 2 },
+  { q: "Il cuore umano è diviso in quante cavità interne?", options: ["2 Cavità", "4 Cavità", "3 Cavità"], a: 1 },
+  { q: "Qual è la funzione principale delle piastrine?", options: ["Difesa immunitaria", "Coagulazione del sangue", "Trasporto di anidride carbonica"], a: 1 },
+  { q: "Dove avviene lo scambio di gas e sostanze nutritive con i tessuti?", options: ["Nei capillari", "Nelle arterie", "Nelle vene cave"], a: 0 },
+  { q: "La grande circolazione ha inizio da quale cavità del cuore?", options: ["Atrio destro", "Ventricolo sinistro", "Ventricolo destro"], a: 1 }
+];
+
+const typingData = [
+  "I globuli rossi contengono l'emoglobina.",
+  "Le arterie hanno pareti elastiche e robuste.",
+  "Il miocardio è il muscolo involontario del cuore.",
+  "La valvola tricuspide si trova nel lato destro."
+];
+
+let studentName = "", studentSurname = "";
+let currentStep = 0; // 0-5 quiz, 6-9 typing
+const totalSteps = quizData.length + typingData.length;
+
+let score = 0;
+let results = [];
+let timeLeft = 240; // 4 minuti
+let timerInterval = null;
+let startTime = 0;
+
+const $ = id => document.getElementById(id);
+
+function startGame() {
+  studentName = $("nome").value.trim();
+  studentSurname = $("cognome").value.trim();
+
+  if (!studentName || !studentSurname) {
+    alert("Per favore, inserisci sia il Nome che il Cognome!");
+    return;
+  }
+
+  $("intro-screen").classList.add("hidden");
+  $("game-screen").classList.remove("hidden");
+
+  startTime = Date.now();
+  startTimer();
+  loadStep();
+
+  $("typing-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      checkTypingAnswer();
+    }
+  });
+
+  $("typing-input").addEventListener("input", function() {
+    const typed = this.value;
+    const target = typingData[currentStep - quizData.length];
+    const isCorrectSoFar = target.startsWith(typed);
+
+    $("feedback").textContent = isCorrectSoFar ? "👍 Digitazione corretta..." : "⚠️ Attenzione alle maiuscole o ai caratteri!";
+    $("feedback").style.color = isCorrectSoFar ? "var(--success)" : "var(--error)";
+  });
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishGame();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  $("timer").textContent = String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
+  if (timeLeft <= 60) $("timer").classList.add("warning");
+}
+
+function loadStep() {
+  const progressPct = (currentStep / totalSteps) * 100;
+  $("progress-bar").style.width = progressPct + "%";
+
+  if (currentStep < quizData.length) {
+    // Carica Quiz
+    $("quiz-section").classList.remove("hidden");
+    $("typing-section").classList.add("hidden");
+
+    const data = quizData[currentStep];
+    $("quiz-question").textContent = `Domanda ${currentStep + 1} di ${quizData.length}: ${data.q}`;
+    
+    const optionsContainer = $("quiz-options");
+    optionsContainer.innerHTML = "";
+    data.options.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.textContent = opt;
+      btn.onclick = () => checkQuizAnswer(idx);
+      optionsContainer.appendChild(btn);
+    });
+  } else if (currentStep < totalSteps) {
+    // Carica Typing
+    $("quiz-section").classList.add("hidden");
+    $("typing-section").classList.remove("hidden");
+
+    const typingIndex = currentStep - quizData.length;
+    $("typing-target").textContent = typingData[typingIndex];
+    $("typing-input").value = "";
+    $("feedback").textContent = "";
+    $("typing-input").focus();
+  } else {
+    finishGame();
+  }
+}
+
+function checkQuizAnswer(selectedIdx) {
+  const data = quizData[currentStep];
+  const isCorrect = selectedIdx === data.a;
+
+  if (isCorrect) score++;
+
+  results.push({
+    question: data.q,
+    userAnswer: data.options[selectedIdx],
+    ok: isCorrect
+  });
+
+  currentStep++;
+  loadStep();
+}
+
+function checkTypingAnswer() {
+  const target = typingData[currentStep - quizData.length];
+  const typed = $("typing-input").value.trim();
+
+  if (!typed) return;
+
+  const isCorrect = typed === target;
+  if (isCorrect) score++;
+
+  results.push({
+    question: "Trascrizione: " + target,
+    userAnswer: typed,
+    ok: isCorrect
+  });
+
+  currentStep++;
+  loadStep();
+}
+
+function finishGame() {
+  clearInterval(timerInterval);
+  const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+
+  // Calcola non completate se scade il tempo
+  while (results.length < totalSteps) {
+    results.push({
+      question: "Non completata per tempo scaduto",
+      userAnswer: "-",
+      ok: false
+    });
+  }
+
+  $("game-screen").classList.add("hidden");
+  $("report-screen").classList.remove("hidden");
+
+  // Compila Report
+  const accuracy = Math.round((score / totalSteps) * 100);
+  const vote = Math.round((score / totalSteps) * 10 * 10) / 10;
+
+  $("report-student").textContent = `Alunno: ${studentName} ${studentSurname}`;
+  $("report-vote").textContent = `Voto Finale: ${vote} / 10`;
+  
+  let judgement = "";
+  if (vote >= 9) judgement = "🌟 Eccellente! Ottima conoscenza e precisione di digitazione!";
+  else if (vote >= 7.5) judgement = "👏 Molto bene! Buon livello scientifico e digitale.";
+  else if (vote >= 6) judgement = "👍 Sufficiente! Puoi migliorare nella velocità e precisione.";
+  else judgement = "💪 Prova da ripetere: ripassa l'argomento e allenati con la tastiera.";
+  
+  $("report-judgement").textContent = judgement;
+
+  $("stat-correct").textContent = `${score} / ${totalSteps}`;
+  $("stat-accuracy").textContent = `${accuracy}%`;
+  $("stat-time").textContent = `${Math.floor(timeSpent / 60)}m ${timeSpent % 60}s`;
+  $("report-date").textContent = "Data prova: " + new Date().toLocaleString("it-IT");
+
+  // Tabella dettagliata
+  const tbody = $("details-table");
+  tbody.innerHTML = "";
+  results.forEach((res, i) => {
+    const tr = document.createElement("tr");
+    
+    const tdIndex = document.createElement("td");
+    tdIndex.textContent = i + 1;
+
+    const tdQ = document.createElement("td");
+    tdQ.textContent = res.question;
+
+    const tdAns = document.createElement("td");
+    tdAns.textContent = res.userAnswer;
+
+    const tdStatus = document.createElement("td");
+    tdStatus.textContent = res.ok ? "CORRETTA" : "ERRATA";
+    tdStatus.className = res.ok ? "correct-text" : "wrong-text";
+
+    tr.appendChild(tdIndex);
+    tr.appendChild(tdQ);
+    tr.appendChild(tdAns);
+    tr.appendChild(tdStatus);
+    tbody.appendChild(tr);
+  });
+}
+
+function downloadCSV() {
+  const rows = [
+    ["REPORT DIDATTICO SCIENZE E DIGITALIZZAZIONE"],
+    ["Nome", studentName],
+    ["Cognome", studentSurname],
+    ["Data", new Date().toLocaleString("it-IT")],
+    ["Punteggio", `${score}/${totalSteps}`],
+    ["Precisione", `${Math.round((score/totalSteps)*100)}%`],
+    [],
+    ["Num", "Quesito / Definizioni", "Risposta Alunno", "Esito"]
+  ];
+
+  results.forEach((r, i) => {
+    rows.push([i + 1, r.question, r.userAnswer, r.ok ? "Corretta" : "Errata"]);
+  });
+
+  const csvContent = "\uFEFF" + rows.map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(";")).join("\n");
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `Report_Scienze_${studentName}_${studentSurname}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+</script>
+</body>
+</html>
