@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Typing - Missione Scheletro</title>
+<style>
+:root {
+  --primary: #087e9d;
+  --primary-hover: #07546e;
+  --bg-gradient: linear-gradient(135deg, #102b46, #167b91);
+  --card-bg: #ffffff;
+  --text-main: #173449;
+  --text-muted: #657987;
+  --border-color: #cbdde5;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 18px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 850px;
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+}
+
+h1 { text-align: center; color: #126580; margin-top: 0; }
+.subtitle { text-align: center; color: var(--text-muted); }
+.hero { text-align: center; font-size: 50px; margin-bottom: 10px; }
+
+label { font-weight: bold; display: block; margin-top: 15px; }
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0 18px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 17px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input:focus { border-color: var(--primary); }
+
+button {
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  margin: 5px 0;
+  transition: background 0.2s, transform 0.1s;
+}
+button:hover { background: var(--primary-hover); }
+button:active { transform: scale(0.98); }
+
+.primary { width: 100%; margin: 15px 0 0 0; font-size: 17px; }
+.hidden { display: none !important; }
+
+.timer {
+  background: #e6f5fa;
+  padding: 15px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  border-radius: 12px;
+  color: #075b78;
+  letter-spacing: 2px;
+}
+.timer.warning { background: #ffe1df; color: #c62828; animation: pulse 1s infinite; }
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.stats { display: flex; justify-content: space-around; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
+.stat { background: #edf5f8; padding: 12px; border-radius: 10px; text-align: center; flex: 1; min-width: 110px; }
+.stat strong { display: block; font-size: 24px; color: var(--primary); }
+
+.target {
+  text-align: center;
+  background: #eaf6fa;
+  padding: 24px;
+  border-radius: 15px;
+  margin: 20px 0;
+  border: 1px solid #d1e8f0;
+}
+.target small { color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+.target h2 { font-size: 26px; color: #075b78; overflow-wrap: anywhere; margin: 10px 0 0 0; }
+
+#typing {
+  width: 100%;
+  padding: 18px;
+  border: 3px solid #1687a2;
+  border-radius: 12px;
+  font-size: 21px;
+  text-align: center;
+  outline: none;
+}
+#typing:focus { background: #f5fcff; }
+
+.feedback { text-align: center; min-height: 25px; font-weight: bold; margin: 15px 0; }
+
+.keyboard { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin: 20px 0; }
+.key {
+  background: #dceaf0;
+  border-radius: 6px;
+  padding: 10px 2px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  color: #25465a;
+  user-select: none;
+}
+.key.active { background: #ffd66b; transform: scale(0.95); }
+.key.space { grid-column: span 10; }
+
+.progress { height: 12px; background: #e2e9ed; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+.bar { height: 100%; background: #17a3a0; width: 0; transition: width 0.3s ease; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+td, th { border: 1px solid #d1dce1; padding: 10px; text-align: left; }
+th { background: #e8f3f7; color: var(--text-main); }
+.correct { color: #2e7d32; font-weight: bold; }
+.wrong { color: #c62828; font-weight: bold; }
+
+.result { background: #eaf6fa; padding: 25px; text-align: center; border-radius: 15px; margin-bottom: 20px; }
+.result h1 { margin: 10px 0; color: var(--primary); }
+
+.action-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.action-buttons button { flex: 1; min-width: 150px; }
+
+@media(max-width: 550px) {
+  .key { font-size: 10px; padding: 8px 0; }
+  .target h2 { font-size: 20px; }
+  .container { padding: 15px; }
+}
+
+@print {
+  body { background: white; padding: 0; display: block; }
+  .container { box-shadow: none; padding: 0; }
+  .no-print { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- SEZIONE INTRO -->
+<section id="intro">
+  <div class="hero">⌨️ 🦴 💻</div>
+  <h1>SKILL TYPING</h1>
+  <h2 class="subtitle">MISSIONE SCHELETRO</h2>
+  <p class="subtitle">La sfida delle ossa del corpo umano</p>
+
+  <p>Benvenuto! Metti alla prova le tue abilità con la tastiera del computer e scopri quanto conosci lo scheletro umano.</p>
+
+  <h3>👤 Identificazione dell'alunno</h3>
+  <label for="nome">Nome *</label>
+  <input id="nome" placeholder="Inserisci il nome" autocomplete="given-name">
+  <label for="cognome">Cognome *</label>
+  <input id="cognome" placeholder="Inserisci il cognome" autocomplete="family-name">
+
+  <h3>🎮 Regole del gioco</h3>
+  <ul>
+    <li>Hai 5 minuti a disposizione.</li>
+    <li>Digita le parole e le frasi che compaiono sullo schermo.</li>
+    <li>Rispetta maiuscole, spazi e punteggiatura.</li>
+    <li>Premi <strong>INVIO</strong> per confermare ogni esercizio.</li>
+    <li>Cerca di essere veloce e preciso!</li>
+  </ul>
+  <button class="primary" onclick="startGame()">INIZIA LA MISSIONE 🚀</button>
+</section>
+
+<!-- SEZIONE GIOCO -->
+<section id="game" class="hidden">
+  <h1>🦴 MISSIONE IN CORSO</h1>
+  <div class="timer" id="timer">05:00</div>
+
+  <div class="stats">
+    <div class="stat"><strong id="progressText">1/15</strong>Prova</div>
+    <div class="stat"><strong id="correctCount">0</strong>Corrette</div>
+    <div class="stat"><strong id="errorCount">0</strong>Errori</div>
+    <div class="stat"><strong id="wpm">0</strong>Caratteri/min</div>
+  </div>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+
+  <div class="target">
+    <small id="typeLabel">DIGITA QUESTA PAROLA</small>
+    <h2 id="targetText"></h2>
+  </div>
+
+  <input id="typing" autocomplete="off" spellcheck="false" placeholder="Scrivi qui e premi INVIO...">
+
+  <p class="feedback" id="feedback">⌨️ Pronto? Comincia a digitare!</p>
+
+  <div class="keyboard" id="keyboard"></div>
+
+  <p class="subtitle">Suggerimento: usa entrambe le mani e cerca di non guardare continuamente la tastiera!</p>
+  <button class="primary" onclick="finishGame()" style="background:#d9534f;">TERMINA LA PROVA</button>
+</section>
+
+<!-- SEZIONE REPORT -->
+<section id="report" class="hidden">
+  <h1>🏆 REPORT FINALE</h1>
+  <div class="result">
+    <h2 id="student" style="margin:0;"></h2>
+    <h1 id="finalScore"></h1>
+    <p id="finalJudgement" style="font-size: 18px; font-weight: bold; margin-bottom: 0;"></p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><strong id="accuracy"></strong>Precisione</div>
+    <div class="stat"><strong id="correct"></strong>Corrette</div>
+    <div class="stat"><strong id="errors"></strong>Errori</div>
+    <div class="
