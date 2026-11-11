@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Typing - Missione Scheletro</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;padding:18px;font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#102b46,#167b91);
+ color:#173449;min-height:100vh
+}
+.container{
+ max-width:850px;margin:auto;background:white;
+ padding:25px;border-radius:20px;
+ box-shadow:0 8px 30px #0004
+}
+h1{text-align:center;color:#126580}
+.subtitle{text-align:center;color:#657987}
+.hero{text-align:center;font-size:55px}
+label{font-weight:bold}
+input{
+ width:100%;padding:13px;margin:8px 0 18px;
+ border:2px solid #cbdde5;border-radius:9px;font-size:17px
+}
+button{
+ padding:13px 20px;border:0;border-radius:10px;
+ background:#087e9d;color:white;font-weight:bold;
+ font-size:15px;cursor:pointer;margin:5px
+}
+button:hover{background:#07546e}
+.primary{width:100%;margin:12px 0}
+.hidden{display:none!important}
+.timer{
+ background:#e6f5fa;padding:15px;text-align:center;
+ font-size:29px;font-weight:bold;border-radius:12px
+}
+.warning{background:#ffe1df;color:#c62828}
+.stats{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;margin:15px 0}
+.stat{background:#edf5f8;padding:12px;border-radius:10px;text-align:center;flex:1;min-width:100px}
+.stat strong{display:block;font-size:23px;color:#087e9d}
+.target{
+ text-align:center;background:#eaf6fa;padding:24px;
+ border-radius:15px;margin:20px 0
+}
+.target small{color:#627987}
+.target h2{font-size:29px;color:#075b78;overflow-wrap:anywhere}
+#typing{
+ width:100%;padding:17px;border:3px solid #1687a2;
+ border-radius:12px;font-size:21px;text-align:center;
+ outline:none
+}
+#typing:focus{background:#f5fcff}
+.feedback{text-align:center;min-height:25px;font-weight:bold}
+.keyboard{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin:20px 0}
+.key{
+ background:#dceaf0;border-radius:6px;padding:9px 2px;
+ text-align:center;font-size:12px;font-weight:bold;
+ color:#25465a
+}
+.key.active{background:#ffd66b}
+.key.space{grid-column:span 10}
+.progress{height:12px;background:#e2e9ed;border-radius:10px;overflow:hidden}
+.bar{height:100%;background:#17a3a0;width:0}
+table{width:100%;border-collapse:collapse;margin-top:15px;font-size:13px}
+td,th{border:1px solid #d1dce1;padding:8px;text-align:left}
+th{background:#e8f3f7}
+.correct{color:green;font-weight:bold}
+.wrong{color:#c62828;font-weight:bold}
+.result{background:#eaf6fa;padding:20px;text-align:center;border-radius:15px}
+@media(max-width:550px){.key{font-size:9px;padding:7px 0}.target h2{font-size:23px}}
+@media print{
+ body{background:white;padding:0}
+ .container{box-shadow:none}
+ .no-print{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<section id="intro">
+ <div class="hero">⌨️ 🦴 💻</div>
+ <h1>SKILL TYPING</h1>
+ <h2 style="text-align:center">MISSIONE SCHELETRO</h2>
+ <p class="subtitle">La sfida delle ossa del corpo umano</p>
+
+ <p>Benvenuto! Metti alla prova le tue abilità con la tastiera del computer e scopri quanto conosci lo scheletro umano.</p>
+
+ <h3>👤 Identificazione dell'alunno</h3>
+ <label>Nome *</label>
+ <input id="nome" placeholder="Inserisci il nome">
+ <label>Cognome *</label>
+ <input id="cognome" placeholder="Inserisci il cognome">
+
+ <h3>🎮 Regole del gioco</h3>
+ <ul>
+  <li>Hai 5 minuti a disposizione.</li>
+  <li>Digita le parole e le frasi che compaiono sullo schermo.</li>
+  <li>Rispetta maiuscole, spazi e punteggiatura.</li>
+  <li>Premi INVIO per confermare ogni esercizio.</li>
+  <li>Cerca di essere veloce e preciso!</li>
+ </ul>
+ <button class="primary" onclick="startGame()">INIZIA LA MISSIONE 🚀</button>
+</section>
+
+<section id="game" class="hidden">
+ <h1>🦴 MISSIONE IN CORSO</h1>
+ <div class="timer" id="timer">05:00</div>
+
+ <div class="stats">
+  <div class="stat"><strong id="progressText">1/15</strong>Prova</div>
+  <div class="stat"><strong id="correctCount">0</strong>Corrette</div>
+  <div class="stat"><strong id="errorCount">0</strong>Errori</div>
+  <div class="stat"><strong id="wpm">0</strong>Caratteri/min</div>
+ </div>
+
+ <div class="progress"><div class="bar" id="bar"></div></div>
+
+ <div class="target">
+  <small id="typeLabel">DIGITA QUESTA PAROLA</small>
+  <h2 id="targetText"></h2>
+ </div>
+
+ <input id="typing" autocomplete="off" spellcheck="false"
+ placeholder="Scrivi qui e premi INVIO...">
+
+ <p class="feedback" id="feedback">⌨️ Pronto? Comincia a digitare!</p>
+
+ <div class="keyboard" id="keyboard"></div>
+
+ <p class="subtitle">Suggerimento: usa entrambe le mani e cerca di non guardare continuamente la tastiera!</p>
+ <button class="primary" onclick="finishGame()">TERMINA LA PROVA</button>
+</section>
+
+<section id="report" class="hidden">
+ <h1>🏆 REPORT FINALE</h1>
+ <div class="result">
+  <h2 id="student"></h2>
+  <h1 id="finalScore"></h1>
+  <p id="finalJudgement"></p>
+ </div>
+
+ <div class="stats">
+  <div class="stat"><strong id="accuracy"></strong>Precisione</div>
+  <div class="stat"><strong id="correct"></strong>Corrette</div>
+  <div class="stat"><strong id="errors"></strong>Errori</div>
+  <div class="stat"><strong id="speed"></strong>Caratteri/min</div>
+ </div>
+
+ <p id="date"></p>
+ <p id="duration"></p>
+ <h3>📋 Dettaglio degli esercizi</h3>
+ <table>
+  <thead><tr>
+   <th>N.</th><th>Testo richiesto</th>
+   <th>Digitazione</th><th>Esito</th>
+  </tr></thead>
+  <tbody id="details"></tbody>
+ </table>
+
+ <div class="no-print">
+  <button onclick="window.print()">🖨️ STAMPA REPORT</button>
+  <button onclick="downloadCSV()">⬇️ SCARICA CSV</button>
+  <button onclick="location.reload()">🔄 NUOVO ALUNNO</button>
+ </div>
+</section>
+</div>
+
+<script>
+const exercises = [
+ ["FEMORE","word"],
+ ["CRANIO","word"],
+ ["ROTULA","word"],
+ ["OMERO","word"],
+ ["COSTOLE","word"],
+ ["TIBIA","word"],
+ ["CLAVICOLA","word"],
+ ["La colonna vertebrale sostiene il corpo.","sentence"],
+ ["Il cranio protegge il cervello.","sentence"],
+ ["Il femore è l'osso più lungo del corpo umano.","sentence"],
+ ["Le costole proteggono cuore e polmoni.","sentence"],
+ ["Lo scheletro di un adulto ha circa 206 ossa.","sentence"],
+ ["La rotula si trova nella parte anteriore del ginocchio.","sentence"],
+ ["Le ossa aiutano il corpo a sostenersi e a muoversi.","sentence"],
+ ["Il calcio è importante per la salute delle ossa.","sentence"]
+];
+
+let name="",surname="",index=0;
+let records=[],correct=0,errors=0;
+let seconds=300,started=0,interval=null;
+let finished=false,totalTyped=0;
+
+const $=id=>document.getElementById(id);
+
+function startGame(){
+ name=$("nome").value.trim();
+ surname=$("cognome").value.trim();
+ if(!name||!surname){
+  alert("Inserisci obbligatoriamente nome e cognome!");
+  return;
+ }
+ $("intro").classList.add("hidden");
+ $("game").classList.remove("hidden");
+ started=Date.now();
+ makeKeyboard();
+ showExercise();
+ $("typing").focus();
+
+ interval=setInterval(()=>{
+  seconds--;
+  updateTimer();
+  if(seconds<=0)finishGame();
+ },1000);
+}
+
+function updateTimer(){
+ let m=Math.floor(seconds/60);
+ let s=seconds%60;
+ $("timer").textContent=
+  String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+ if(seconds<=60)$("timer").classList.add("warning");
+}
+
+function showExercise(){
+ if(index>=exercises.length){finishGame();return;}
+ const [text,type]=exercises[index];
+ $("targetText").textContent=text;
+ $("typeLabel").textContent=
+  type==="word"?"DIGITA QUESTA PAROLA":"DIGITA QUESTA FRASE";
+ $("typing").value="";
+ $("feedback").textContent="⌨️ Scrivi il testo esattamente come appare.";
+ $("progressText").textContent=(index+1)+"/"+exercises.length;
+ $("bar").style.width=(index/exercises.length*100)+"%";
+ $("typing").focus();
+}
+
+function makeKeyboard(){
+ const keys="QWERTYUIOPASDFGHJKLZXCVBNM".split("");
+ $("keyboard").innerHTML="";
+ keys.forEach(k=>{
+  const div=document.createElement("div");
+  div.className="key";
+  div.id="key-"+k;
+  div.textContent=k;
+  $("keyboard").appendChild(div);
+ });
+ const space=document.createElement("div");
+ space.className="key space";
+ space.textContent="SPAZIO";
+ space.id="key-space";
+ $("keyboard").appendChild(space);
+}
+
+$("typing").addEventListener("input",()=>{
+ const value=$("typing").value;
+ const target=exercises[index][0];
+ let match=true;
+ for(let i=0;i<value.length;i++){
+  if(value[i]!==target[i]){match=false;break;}
+ }
+ $("feedback").textContent=match
+  ?"👍 Ottimo! Continua a digitare."
+  :"⚠️ Attenzione: controlla la digitazione.";
+ $("feedback").style.color=match?"green":"#c62828";
+});
+
+$("typing").addEventListener("keydown",e=>{
+ document.querySelectorAll(".key").forEach(k=>k.classList.remove("active"));
+ let key=e.key===" "?"space":e.key.toUpperCase();
+ const element=$("key-"+key);
+ if(element)element.classList.add("active");
+});
+
+$("typing").addEventListener("keyup",()=>{
+ setTimeout(()=>{
+  document.querySelectorAll(".key").forEach(k=>k.classList.remove("active"));
+ },120);
+});
+
+$("typing").addEventListener("keydown",e=>{
+ if(e.key==="Enter"){
+  e.preventDefault();
+  checkAnswer();
+ }
+});
+
+function checkAnswer(){
+ if(finished)return;
+ const target=exercises[index][0];
+ const typed=$("typing").value;
+ if(!typed.trim()){
+  $("feedback").textContent="Scrivi prima la risposta!";
+  return;
+ }
+
+ const ok=typed===target;
+ if(ok)correct++;
+ else errors++;
+
+ totalTyped+=typed.length;
+
+ records.push({
+  target:target,
+  typed:typed,
+  ok:ok
+ });
+
+ $("correctCount").textContent=correct;
+ $("errorCount").textContent=errors;
+
+ const elapsed=Math.max(1,Math.floor((Date.now()-started)/60000));
+ $("wpm").textContent=Math.round(totalTyped/elapsed);
+
+ $("feedback").textContent=ok?"✅ Risposta corretta!":"❌ Risposta errata. Continua!";
+ $("feedback").style.color=ok?"green":"#c62828";
+
+ index++;
+ if(index>=exercises.length){
+  finishGame();
+ }else{
+  setTimeout(showExercise,450);
+ }
+}
+
+function finishGame(){
+ if(finished)return;
+ finished=true;
+ clearInterval(interval);
+
+ const duration=Math.floor((Date.now()-started)/1000);
+ const remaining=exercises.length-records.length;
+
+ for(let i=0;i<remaining;i++){
+  records.push({
+   target:exercises[index+i][0],
+   typed:"Non completata",
+   ok:false
+  });
+ }
+
+ const total=exercises.length;
+ const precision=Math.round(correct/total*100);
+ const minutes=Math.max(1/60,duration/60);
+ const speed=Math.round(totalTyped/minutes);
+
+ $("game").classList.add("hidden");
+ $("report").classList.remove("hidden");
+
+ $("student").textContent=name+" "+surname;
+ $("finalScore").textContent=correct+"/"+total+" esercizi corretti";
+ $("accuracy").textContent=precision+"%";
+ $("correct").textContent=correct;
+ $("errors").textContent=errors;
+ $("speed").textContent=speed;
+ $("date").textContent="Data: "+new Date().toLocaleString("it-IT");
+ $("duration").textContent="Tempo impiegato: "+
+  Math.floor(duration/60)+" minuti e "+duration%60+" secondi";
+
+ let judgement="";
+ if(precision>=90)judgement="🌟 Eccellente! Ottima precisione!";
+ else if(precision>=75)judgement="👏 Molto bene! Continua così!";
+ else if(precision>=60)judgement="👍 Buon lavoro! Puoi migliorare!";
+ else judgement="💪 Continua ad allenarti con la tastiera!";
+ $("finalJudgement").textContent=judgement;
+
+ $("details").innerHTML="";
+ records.forEach((r,i)=>{
+  const tr=document.createElement("tr");
+  [i+1,r.target,r.typed,r.ok?"CORRETTA":"ERRATA"].forEach((v,j)=>{
+   const td=document.createElement("td");
+   td.textContent=v;
+   if(j===3)td.className=r.ok?"correct":"wrong";
+   tr.appendChild(td);
+  });
+  $("details").appendChild(tr);
+ });
+}
+
+function downloadCSV(){
+ const rows=[
+  ["REPORT SKILL TYPING"],
+  ["Nome",name],
+  ["Cognome",surname],
+  ["Data",new Date().toLocaleString("it-IT")],
+  ["Punteggio",correct+"/"+exercises.length],
+  ["Errori",errors],
+  ["Precisione",Math.round(correct/exercises.length*100)+"%"],
+  [],
+  ["Numero","Testo richiesto","Testo digitato","Esito"],
+  ...records.map((r,i)=>[
+   i+1,r.target,r.typed,r.ok?"Corretta":"Errata"
+  ])
+ ];
+ const csv="\uFEFF"+rows.map(row=>
+  row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(";")
+ ).join("\r\n");
+
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download="Report_"+name+"_"+surname+".csv";
+ a.click();
+ URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
