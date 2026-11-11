@@ -1,1 +1,880 @@
-file:///Users/erica/Downloads/skill_typing_missione_scheletro.html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Typing - Missione Scheletro</title>
+    <style>
+        /* ==========================================================================
+           RESET E VARIABILI CSS (DESIGN SYSTEM PRO)
+           ========================================================================== */
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --primary: #06b6d4;
+            --primary-hover: #0891b2;
+            --primary-light: #67e8f9;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* ==========================================================================
+           CONTAINER E STRUTTURA PRINCIPALE
+           ========================================================================== */
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .hidden { display: none !important; }
+
+        /* ==========================================================================
+           TYPOGRAPHY & UTILITIES
+           ========================================================================== */
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light), #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.025em;
+        }
+
+        h2.subtitle {
+            text-align: center;
+            color: var(--accent);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        p.description {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .hero-emoji {
+            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ==========================================================================
+           FORM E PULSANTI
+           ========================================================================== */
+        .form-card, .rules-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-card h3, .rules-card h3 {
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .input-group { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+            .container { padding: 1.25rem; }
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
+        }
+
+        .rules-list {
+            list-style: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .rules-list li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.25rem;
+        }
+
+        .rules-list li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #2563eb);
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -5px rgba(6, 182, 212, 0.6);
+        }
+
+        .btn-primary:active { transform: translateY(0); }
+
+        /* ==========================================================================
+           SCHERMATA DI GIOCO (GAMEPLAY)
+           ========================================================================== */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 0.75rem 1.25rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .timer {
+            font-family: monospace;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary-light);
+            background: #0f172a;
+            padding: 0.25rem 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--primary);
+        }
+
+        .timer.warning {
+            color: var(--danger);
+            border-color: var(--danger);
+            animation: pulse-red 1s infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .stat-box {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .stat-box span {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .stat-box strong {
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #0f172a;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .target-card {
+            background: #0f172a;
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .target-card small {
+            color: var(--primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+        }
+
+        .target-card h3 {
+            font-size: 1.75rem;
+            color: white;
+            margin-top: 0.5rem;
+            word-break: break-word;
+        }
+
+        #typing-input {
+            font-size: 1.3rem;
+            text-align: center;
+            padding: 1rem;
+            border-width: 3px;
+            margin-bottom: 0.5rem;
+            background: #090d16;
+        }
+
+        .feedback-text {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            height: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* ==========================================================================
+           TASTIERA VIRTUALE INTERATTIVA
+           ========================================================================== */
+        .keyboard {
+            background: #090d16;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            max-width: 650px;
+            margin: 0 auto 1rem auto;
+            user-select: none;
+        }
+
+        .kb-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .key {
+            background: #1e293b;
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 0.4rem;
+            padding: 0.6rem 0.2rem;
+            text-align: center;
+            min-width: 28px;
+            flex: 1;
+            border: 1px solid #334155;
+            box-shadow: 0 2px 0 #0f172a;
+            transition: all 0.1s ease;
+        }
+
+        .key.space { flex: 6; }
+
+        .key.active {
+            background: var(--accent) !important;
+            color: white !important;
+            transform: translateY(2px);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.8) !important;
+        }
+
+        /* ==========================================================================
+           REPORT FINALE
+           ========================================================================== */
+        .result-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-box h2 { color: var(--primary-light); margin-bottom: 0.25rem; }
+        .result-box h1 { font-size: 2.2rem; color: var(--accent); margin: 0.5rem 0; }
+
+        .judgement-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid var(--success);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        .table-wrapper {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        th {
+            background: #0f172a;
+            color: var(--text-muted);
+            padding: 0.75rem;
+            position: sticky;
+            top: 0;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .badge-ok { color: var(--success); font-weight: bold; }
+        .badge-err { color: var(--danger); font-weight: bold; }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn { flex: 1; min-width: 140px; font-size: 0.95rem; padding: 0.75rem; }
+
+        /* ==========================================================================
+           STAMPA
+           ========================================================================== */
+        @media print {
+            body { background: white !important; color: black !important; }
+            .container { box-shadow: none !important; border: none !important; padding: 0 !important; background: white !important; }
+            .no-print { display: none !important; }
+            .result-box, .stat-box, th { background: #f8fafc !important; color: black !important; border: 1px solid #cbd5e1 !important; }
+            h1 { background: none !important; -webkit-text-fill-color: black !important; color: black !important; }
+            .table-wrapper { max-height: none !important; overflow: visible !important; }
+            td { color: black !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ========================================== -->
+    <!-- SCHERMATA 1: INTRODUZIONE                 -->
+    <!-- ========================================== -->
+    <section id="intro-screen">
+        <div class="hero-emoji">⌨️ 🦴 💻</div>
+        <h1>SKILL TYPING</h1>
+        <h2 class="subtitle">MISSIONE SCHELETRO</h2>
+        <p class="description">Allenati con la tastiera imparando le ossa del corpo umano!</p>
+
+        <div class="form-card">
+            <h3>👤 Identificazione Alunno</h3>
+            <div class="input-group">
+                <div>
+                    <label for="nome">Nome *</label>
+                    <input id="nome" type="text" placeholder="Es. Mario" autocomplete="given-name">
+                </div>
+                <div>
+                    <label for="cognome">Cognome *</label>
+                    <input id="cognome" type="text" placeholder="Es. Rossi" autocomplete="family-name">
+                </div>
+            </div>
+        </div>
+
+        <div class="rules-card">
+            <h3>🎮 Regole del Gioco</h3>
+            <ul class="rules-list">
+                <li>Hai <strong>5 minuti</strong> di tempo massimo per ultimare la prova.</li>
+                <li>Digita esattamente il testo proposto (attenzione a maiuscole e punteggiatura).</li>
+                <li>Premi <strong>INVIO</strong> sulla tastiera per avanzare al prossimo esercizio.</li>
+                <li>Mieni il ritmo e cerca di non guardare costantemente le mani!</li>
+            </ul>
+        </div>
+
+        <button class="btn btn-primary" onclick="startGame()">INIZIA LA MISSIONE 🚀</button>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- SCHERMATA 2: CORSO DEL GIOCO               -->
+    <!-- ========================================== -->
+    <section id="game-screen" class="hidden">
+        <div class="game-header">
+            <div>
+                <strong style="color: white; display: block;">🦴 Missione Scheletro</strong>
+                <small id="student-badge" style="color: var(--primary-light);">Alunno: -</small>
+            </div>
+            <div id="timer" class="timer">05:00</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span>Esercizio</span>
+                <strong id="progressText" style="color: var(--primary-light);">1/15</strong>
+            </div>
+            <div class="stat-box">
+                <span>Corrette</span>
+                <strong id="correctCount" style="color: var(--success);">0</strong>
+            </div>
+            <div class="stat-box">
+                <span>Errori</span>
+                <strong id="errorCount" style="color: var(--danger);">0</strong>
+            </div>
+            <div class="stat-box">
+                <span>Velocità</span>
+                <strong id="wpm" style="color: var(--accent);">0 WPM</strong>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div id="bar" class="progress-bar"></div>
+        </div>
+
+        <div class="target-card">
+            <small id="typeLabel">DIGITA QUESTA PAROLA</small>
+            <h3 id="targetText">...</h3>
+        </div>
+
+        <input id="typing-input" type="text" autocomplete="off" spellcheck="false" placeholder="Digita qui e premi INVIO...">
+        
+        <div id="feedback" class="feedback-text" style="color: var(--text-muted);">
+            ⌨️ Inizia a digitare per far partire il test!
+        </div>
+
+        <div class="keyboard" id="keyboard"></div>
+
+        <button onclick="finishGame()" class="btn" style="background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); margin-top: 1rem; font-size: 0.9rem; padding: 0.6rem;">
+            Termina Anticipatamente la Prova
+        </button>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- SCHERMATA 3: REPORT FINALE                 -->
+    <!-- ========================================== -->
+    <section id="report-screen" class="hidden">
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <span style="font-size: 3rem;">🏆</span>
+            <h1 style="font-size: 2rem;">REPORT FINALE</h1>
+        </div>
+
+        <div class="result-box">
+            <h2 id="student-name">Alunno: -</h2>
+            <h1 id="finalScore">0/15</h1>
+            <div id="finalJudgement" class="judgement-badge">-</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span>Precisione</span>
+                <strong id="accuracy" style="color: var(--primary-light);">0%</strong>
+            </div>
+            <div class="stat-box">
+                <span>Corrette</span>
+                <strong id="correct" style="color: var(--success);">0</strong>
+            </div>
+            <div class="stat-box">
+                <span>Errori</span>
+                <strong id="errors" style="color: var(--danger);">0</strong>
+            </div>
+            <div class="stat-box">
+                <span>Caratt./min</span>
+                <strong id="speed" style="color: var(--accent);">0</strong>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+            <span id="report-date">Data: -</span>
+            <span id="report-duration">Durata: -</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Testo Richiesto</th>
+                        <th>Testo Digitato</th>
+                        <th style="text-align: center;">Esito</th>
+                    </tr>
+                </thead>
+                <tbody id="details"></tbody>
+            </table>
+        </div>
+
+        <div class="btn-group no-print">
+            <button onclick="window.print()" class="btn" style="background: #334155; color: white;">🖨️ Stampa</button>
+            <button onclick="downloadCSV()" class="btn" style="background: var(--success); color: white;">⬇️ Scarica CSV</button>
+            <button onclick="location.reload()" class="btn btn-primary">🔄 Nuovo Alunno</button>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    /* ==========================================================================
+       LOGICA JAVASCRIPT APPLICATIVA
+       ========================================================================== */
+
+    const exercises = [
+        ["FEMORE", "word"],
+        ["CRANIO", "word"],
+        ["ROTULA", "word"],
+        ["OMERO", "word"],
+        ["COSTOLE", "word"],
+        ["TIBIA", "word"],
+        ["CLAVICOLA", "word"],
+        ["La colonna vertebrale sostiene il corpo.", "sentence"],
+        ["Il cranio protegge il cervello.", "sentence"],
+        ["Il femore è l'osso più lungo del corpo umano.", "sentence"],
+        ["Le costole proteggono cuore e polmoni.", "sentence"],
+        ["Lo scheletro di un adulto ha circa 206 ossa.", "sentence"],
+        ["La rotula si trova nella parte anteriore del ginocchio.", "sentence"],
+        ["Le ossa aiutano il corpo a sostenersi e a muoversi.", "sentence"],
+        ["Il calcio è importante per la salute delle ossa.", "sentence"]
+    ];
+
+    let name = "", surname = "", index = 0;
+    let records = [], correct = 0, errors = 0;
+    let seconds = 300, started = 0, interval = null;
+    let finished = false, totalTyped = 0;
+
+    const $ = id => document.getElementById(id);
+
+    function startGame() {
+        name = $("nome").value.trim();
+        surname = $("cognome").value.trim();
+
+        if (!name || !surname) {
+            alert("Compila sia il Nome che il Cognome per iniziare la sessione!");
+            return;
+        }
+
+        $("intro-screen").classList.add("hidden");
+        $("game-screen").classList.remove("hidden");
+        $("student-badge").textContent = `Alunno: ${name} ${surname}`;
+
+        started = Date.now();
+        makeKeyboard();
+        showExercise();
+
+        interval = setInterval(() => {
+            seconds--;
+            updateTimer();
+            if (seconds <= 0) finishGame();
+        }, 1000);
+    }
+
+    function updateTimer() {
+        let m = Math.floor(seconds / 60);
+        let s = seconds % 60;
+        const timerEl = $("timer");
+        timerEl.textContent = String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+
+        if (seconds <= 60) {
+            timerEl.classList.add("warning");
+        }
+    }
+
+    function showExercise() {
+        if (index >= exercises.length) {
+            finishGame();
+            return;
+        }
+
+        const [text, type] = exercises[index];
+        $("targetText").textContent = text;
+        $("typeLabel").textContent = type === "word" ? "DIGITA QUESTA PAROLA" : "DIGITA QUESTA FRASE";
+        
+        const input = $("typing-input");
+        input.value = "";
+        input.focus();
+
+        $("feedback").textContent = "⌨️ Digita il testo esattamente come indicato.";
+        $("feedback").style.color = "var(--text-muted)";
+
+        $("progressText").textContent = (index + 1) + "/" + exercises.length;
+        $("bar").style.width = ((index) / exercises.length * 100) + "%";
+    }
+
+    function makeKeyboard() {
+        const layout = [
+            ["Q","W","E","R","T","Y","U","I","O","P"],
+            ["A","S","D","F","G","H","J","K","L"],
+            ["Z","X","C","V","B","N","M"]
+        ];
+        
+        const kb = $("keyboard");
+        kb.innerHTML = "";
+
+        layout.forEach(row => {
+            const rDiv = document.createElement("div");
+            rDiv.className = "kb-row";
+            row.forEach(c => {
+                const kDiv = document.createElement("div");
+                kDiv.className = "key";
+                kDiv.id = "key-" + c;
+                kDiv.textContent = c;
+                rDiv.appendChild(kDiv);
+            });
+            kb.appendChild(rDiv);
+        });
+
+        const sRow = document.createElement("div");
+        sRow.className = "kb-row";
+        const sDiv = document.createElement("div");
+        sDiv.className = "key space";
+        sDiv.id = "key-SPACE";
+        sDiv.textContent = "SPAZIO";
+        sRow.appendChild(sDiv);
+        kb.appendChild(sRow);
+    }
+
+    $("typing-input").addEventListener("input", () => {
+        const val = $("typing-input").value;
+        const target = exercises[index][0];
+        let ok = true;
+
+        for (let i = 0; i < val.length; i++) {
+            if (val[i] !== target[i]) { ok = false; break; }
+        }
+
+        const fb = $("feedback");
+        if (ok) {
+            fb.textContent = "👍 Perfetto! Continua così...";
+            fb.style.color = "var(--success)";
+        } else {
+            fb.textContent = "⚠️ Attenzione: c'è un errore nella digitazione!";
+            fb.style.color = "var(--danger)";
+        }
+    });
+
+    $("typing-input").addEventListener("keydown", e => {
+        let k = e.key === " " ? "SPACE" : e.key.toUpperCase();
+        const keyEl = $("key-" + k);
+        if (keyEl) keyEl.classList.add("active");
+
+        if (e.key === "Enter") {
+            e.preventDefault();
+            checkAnswer();
+        }
+    });
+
+    $("typing-input").addEventListener("keyup", e => {
+        let k = e.key === " " ? "SPACE" : e.key.toUpperCase();
+        const keyEl = $("key-" + k);
+        if (keyEl) keyEl.classList.remove("active");
+    });
+
+    function checkAnswer() {
+        if (finished) return;
+        const target = exercises[index][0];
+        const typed = $("typing-input").value;
+
+        if (!typed.trim()) {
+            $("feedback").textContent = "⚠️ Digita qualcosa prima di premere INVIO!";
+            $("feedback").style.color = "var(--accent)";
+            return;
+        }
+
+        const isOk = typed === target;
+        if (isOk) correct++;
+        else errors++;
+
+        totalTyped += typed.length;
+        records.push({ target: target, typed: typed, ok: isOk });
+
+        $("correctCount").textContent = correct;
+        $("errorCount").textContent = errors;
+
+        const elapsedMins = Math.max(0.1, (Date.now() - started) / 60000);
+        $("wpm").textContent = Math.round((totalTyped / 5) / elapsedMins) + " WPM";
+
+        index++;
+        if (index >= exercises.length) {
+            finishGame();
+        } else {
+            showExercise();
+        }
+    }
+
+    function finishGame() {
+        if (finished) return;
+        finished = true;
+        clearInterval(interval);
+
+        const durationSecs = Math.floor((Date.now() - started) / 1000);
+        const remaining = exercises.length - records.length;
+
+        for (let i = 0; i < remaining; i++) {
+            records.push({
+                target: exercises[index + i][0],
+                typed: "(Non svolta)",
+                ok: false
+            });
+        }
+
+        const total = exercises.length;
+        const precision = Math.round((correct / total) * 100);
+        const mins = Math.max(1 / 60, durationSecs / 60);
+        const cpm = Math.round(totalTyped / mins);
+
+        $("game-screen").classList.add("hidden");
+        $("report-screen").classList.remove("hidden");
+
+        $("student-name").textContent = `Alunno: ${name} ${surname}`;
+        $("finalScore").textContent = `${correct} / ${total} Corretti`;
+        $("accuracy").textContent = precision + "%";
+        $("correct").textContent = correct;
+        $("errors").textContent = errors;
+        $("speed").textContent = cpm;
+        
+        $("report-date").textContent = "Data: " + new Date().toLocaleString("it-IT");
+        $("report-duration").textContent = "Tempo: " + Math.floor(durationSecs / 60) + "m " + (durationSecs % 60) + "s";
+
+        let judgement = "";
+        if (precision >= 90) judgement = "🌟 Eccellente! Ottima velocità e precisione!";
+        else if (precision >= 75) judgement = "👏 Molto Bene! Ottima conoscenza della tastiera.";
+        else if (precision >= 60) judgement = "👍 Sufficiente! Esercitati ancora per migliorare.";
+        else judgement = "💪 Da Migliorare! Ripeti la missione per fare pratica.";
+        $("finalJudgement").textContent = judgement;
+
+        const details = $("details");
+        details.innerHTML = "";
+        records.forEach((r, idx) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><strong>${idx + 1}</strong></td>
+                <td>${r.target}</td>
+                <td style="font-family: monospace;">${r.typed}</td>
+                <td style="text-align: center;">
+                    <span class="${r.ok ? 'badge-ok' : 'badge-err'}">${r.ok ? 'CORRETTA' : 'ERRATA'}</span>
+                </td>
+            `;
+            details.appendChild(tr);
+        });
+    }
+
+    function downloadCSV() {
+        const rows = [
+            ["REPORT SKILL TYPING"],
+            ["Nome", name],
+            ["Cognome", surname],
+            ["Data", new Date().toLocaleString("it-IT")],
+            ["Punteggio", correct + "/" + exercises.length],
+            ["Errori", errors],
+            ["Precisione", Math.round((correct / exercises.length) * 100) + "%"],
+            [],
+            ["#", "Testo Richiesto", "Testo Digitato", "Esito"]
+        ];
+
+        records.forEach((r, idx) => {
